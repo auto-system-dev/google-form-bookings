@@ -15,19 +15,21 @@ const API_BASE = "https://script.google.com/macros/s/AKfycbzZRykhI3HrwgaAxKoBu1W
 /* ---------------------------------------------------------
    ⭐ STEP 2：統一 GET 請求
    --------------------------------------------------------- */
-asyncfunction apiGet(path) {
-  const url = `${API_BASE}${path}`;
-  return fetch(url)
-    .then(res => res.json());
+async function apiGet(path) {
+  const res = await fetch(API_BASE + path, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  });
+  return res.json();
 }
 
-function apiPost(path, data = {}) {
-  const url = `${API_BASE}${path}`;
-  return fetch(url, {
+async function apiPost(path, data = {}) {
+  const res = await fetch(API_BASE + path, {
     method: "POST",
-    body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" }
-  }).then(res => res.json());
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+  return res.json();
 }
 
 
