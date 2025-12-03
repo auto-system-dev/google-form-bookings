@@ -6,7 +6,7 @@
     "minNights": 1,
     "maxNights": 3,
     "image": "images/a-house.jpg",
-    "description": "A館包棟，適合家庭與團體入住，提供舒適的大空間與完善設施。",
+    "description": "A館包棟，適合家庭與團體入住。",
     "maxGuests": 12
   },
   {
@@ -16,7 +16,7 @@
     "minNights": 1,
     "maxNights": 3,
     "image": "images/b-house.jpg",
-    "description": "B館包棟，擁有獨立庭院、烤肉區，適合派對與多人團聚。",
+    "description": "B館包棟，擁有獨立庭院、烤肉區。",
     "maxGuests": 16
   }
 ]
