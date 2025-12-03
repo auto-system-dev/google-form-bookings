@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<title>LINE 預約訂位</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- LIFF -->
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<!-- 日期套件 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh-tw.js"></script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="reserve-card">
+
+  <h1 class="title">預約訂位</h1>
+
+  <form id="liffForm">
+
+    <!-- 隱藏 -->
+    <input type="hidden" id="line_uid">
+
+    <!-- 姓名 -->
+    <div class="field">
+      <label>姓名<span class="req">*</span></label>
+      <input type="text" id="name" required placeholder="請輸入姓名">
+    </div>
+
+    <!-- 手機 -->
+    <div class="field">
+      <label>手機號碼<span class="req">*</span></label>
+      <input type="tel" id="phone" required maxlength="10"
+             pattern="09[0-9]{8}" placeholder="0912345678" inputmode="numeric">
+    </div>
+
+    <!-- 日期 -->
+    <div class="field">
+      <label>預約日期<span class="req">*</span></label>
+      <input type="text" id="date" required placeholder="請選擇日期" readonly>
+      <p class="hint">營業日：週六 / 週日 與 國定假日</p>
+    </div>
+
+    <!-- 時間 -->
+    <div class="field">
+      <label>預約時段<span class="req">*</span></label>
+      <select id="time" required>
+        <option value="" disabled selected>請選擇</option>
+        <option>11:30</option>
+        <option>13:30</option>
+        <option>15:30</option>
+      </select>
+    </div>
+
+    <!-- 大人人數 -->
+    <div class="field">
+      <label>大人人數<span class="req">*</span></label>
+      <select id="adult" required>
+        <option value="" disabled selected>請選擇</option>
+        <script>
+          document.write(
+            Array.from({length: 30}, (_, i) => i+1)
+            .map(n => `<option value="${n}">${n} 位</option>`)
+            .join("")
+          );
+        </script>
+      </select>
+    </div>
+
+    <!-- 小孩 -->
+    <div class="field">
+      <label>小孩人數</label>
+      <select id="child">
+        <option value="0">0 位</option>
+        <script>
+          document.write(
+            Array.from({length: 10}, (_, i) => i+1)
+            .map(n => `<option value="${n}">${n} 位</option>`)
+            .join("")
+          );
+        </script>
+      </select>
+    </div>
+
+    <!-- 兒童椅 -->
+    <div class="field">
+      <label>兒童坐椅</label>
+      <select id="chair">
+        <option value="0">0 張</option>
+        <script>
+          document.write(
+            Array.from({length: 5}, (_, i) => i+1)
+            .map(n => `<option value="${n}">${n} 張</option>`)
+            .join("")
+          );
+        </script>
+      </select>
+    </div>
+
+    <!-- 備註 -->
+    <div class="field">
+      <label>備註</label>
+      <textarea id="note" rows="3" placeholder="可填寫特殊需求…"></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">送出預約</button>
+
+  </form>
+</div>
+
+<script>
+// 初始化 LIFF
+async function initLIFF() {
+  await liff.init({ liffId: "2008586106-kLrdO1gp" });
+  if (!liff.isLoggedIn()) {
+    liff.login({ redirectUri: location.href });
+    return;
+  }
+  const profile = await liff.getProfile();
+  document.getElementById("line_uid").value = profile.userId;
+}
+
+// 日期套件
+function initCalendar() {
+  flatpickr("#date", {
+    locale: "zh_tw",
+    dateFormat: "Y-m-d",
+    minDate: new Date().fp_incr(1)
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initLIFF();
+  initCalendar();
+});
+
+// 表單送出
+document.getElementById("liffForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const p = new URLSearchParams();
+  ["line_uid","name","phone","date","time","adult","child","chair","note"]
+    .forEach(id => p.append(id.replace("line_",""), document.getElementById(id).value));
+  location.href = "resultSend.html?" + p.toString();
+});
+</script>
+
+</body>
+</html>
