@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>填寫預約資料</title>
 
-<!-- LIFF SDK -->
+<!-- LIFF -->
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <style>
@@ -16,57 +16,75 @@
   }
 
   .container {
-    max-width: 700px;
+    max-width: 820px;
     margin: 0 auto;
-    padding: 16px;
+    padding: 20px;
   }
 
-  .title {
-    font-size: 22px;
+  .page-title {
+    font-size: 24px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
-  .info-box, .form-box {
+  /* 卡片 */
+  .card {
     background: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    border: 1px solid #e6e6e6;
-    margin-bottom: 16px;
+    border-radius: 14px;
+    padding: 22px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
   }
 
-  .label {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 4px;
-  }
-
-  .value {
-    font-size: 17px;
-    font-weight: 700;
+  /* 資訊 row */
+  .info-row {
     margin-bottom: 10px;
+    font-size: 15px;
   }
 
-  input, textarea {
+  .info-label {
+    color: #666;
+  }
+
+  .info-value {
+    font-weight: 700;
+    color: #333;
+  }
+
+  /* Material 輸入欄位 */
+  .input-group {
+    margin-bottom: 18px;
+  }
+
+  .input-label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  input, select, textarea {
     width: 100%;
     padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+    border-radius: 10px;
+    border: 1px solid #ccc;
     font-size: 16px;
-    margin-bottom: 14px;
     box-sizing: border-box;
+    background: #fafafa;
   }
 
   textarea { height: 100px; resize: vertical; }
 
-  .btn {
+  /* 下一步按鈕 */
+  .submit-btn {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
     background: #1a73e8;
-    color: #fff;
-    font-size: 17px;
     border: none;
+    padding: 16px;
+    font-size: 18px;
+    color: #fff;
+    border-radius: 12px;
     cursor: pointer;
   }
 </style>
@@ -77,65 +95,126 @@
 
 <div class="container">
 
-  <div class="title">填寫預約資料</div>
+  <div class="page-title">填寫預約資料</div>
 
-  <div id="info" class="info-box"></div>
+  <!-- 預約資訊 -->
+  <div class="card" id="infoBox"></div>
 
-  <div class="form-box">
+  <!-- 表單 -->
+  <div class="card">
 
-  <label class="label">姓名（必填）</label>
-  <input type="text" id="name" required />
+    <div class="input-group">
+      <label class="input-label">姓名（必填）</label>
+      <input type="text" id="name" required />
+    </div>
 
-  <label class="label">手機號碼（必填）</label>
-  <input type="tel" id="phone" maxlength="10" placeholder="0912345678" required />
+    <div class="input-group">
+      <label class="input-label">手機號碼（必填）</label>
+      <input type="tel" id="phone" maxlength="10" placeholder="0912345678" required />
+    </div>
 
-  <label class="label">大人人數</label>
-  <input type="number" id="adult" min="1" value="1" />
+    <div class="input-group">
+      <label class="input-label">Email（選填）</label>
+      <input type="email" id="email" />
+    </div>
 
-  <label class="label">小孩人數</label>
-  <input type="number" id="child" min="0" value="0" />
+    <div class="input-group">
+      <label class="input-label">大人人數</label>
+      <input type="number" id="adult" value="1" min="1" />
+    </div>
 
-  <label class="label">是否攜帶寵物</label>
-  <select id="petOption" onchange="togglePetCount()">
-    <option value="no">否</option>
-    <option value="yes">是</option>
-  </select>
+    <div class="input-group">
+      <label class="input-label">小孩人數</label>
+      <input type="number" id="child" value="0" min="0" />
+    </div>
 
-  <div id="petCountBox" style="display:none; margin-top:10px;">
-    <label class="label">寵物數量</label>
-    <input type="number" id="petCount" min="1" value="1" />
+    <div class="input-group">
+      <label class="input-label">是否攜帶寵物</label>
+      <select id="petOption" onchange="togglePetCount()">
+        <option value="no">否</option>
+        <option value="yes">是</option>
+      </select>
+    </div>
+
+    <div class="input-group" id="petCountBox" style="display:none;">
+      <label class="input-label">寵物數量</label>
+      <input type="number" id="petCount" value="1" min="1" />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">備註（選填）</label>
+      <textarea id="note"></textarea>
+    </div>
+
+    <input type="hidden" id="line_uid" />
+
+    <button class="submit-btn" onclick="submitBooking()">送出預約</button>
+
   </div>
 
-  <label class="label">備註（選填）</label>
-  <textarea id="note"></textarea>
-
-  <input type="hidden" id="line_uid" />
-
-  <button class="btn" onclick="submitBooking()">送出預約</button>
 </div>
 
 <script>
-function togglePetCount() {
-  const isPet = document.getElementById("petOption").value;
-  document.getElementById("petCountBox").style.display =
-    isPet === "yes" ? "block" : "none";
+// ---- 取得網址參數 ----
+const params = new URLSearchParams(location.search);
+const roomId = params.get("roomId");
+const checkin = params.get("date");
+const checkout = params.get("checkout");
+const nights = params.get("nights");
+
+let roomData = null;
+
+// ---- 載入房型資訊 ----
+async function loadInfo() {
+  const res = await fetch("data/rooms.json");
+  const rooms = await res.json();
+  roomData = rooms.find(r => r.id === roomId);
+
+  document.getElementById("infoBox").innerHTML = `
+      <div class="info-row"><span class="info-label">房型：</span><span class="info-value">${roomData.title}</span></div>
+      <div class="info-row"><span class="info-label">入住日期：</span><span class="info-value">${checkin}</span></div>
+      <div class="info-row"><span class="info-label">退房日期：</span><span class="info-value">${checkout}</span></div>
+      <div class="info-row"><span class="info-label">入住晚數：</span><span class="info-value">${nights} 晚</span></div>
+      <div class="info-row"><span class="info-label">總金額：</span><span class="info-value">$${(roomData.basePrice * nights).toLocaleString()}</span></div>
+  `;
 }
 
+loadInfo();
+
+// ---- Material UI：寵物切換 ----
+function togglePetCount() {
+  document.getElementById("petCountBox").style.display =
+    document.getElementById("petOption").value === "yes" ? "block" : "none";
+}
+
+// ---- 取得 LINE UID ----
+async function initLIFF() {
+  await liff.init({ liffId: "YOUR_LIFF_ID" });
+  const profile = await liff.getProfile();
+  document.getElementById("line_uid").value = profile.userId;
+}
+
+initLIFF();
+
+
+// ---- 送出預約 ----
 function submitBooking() {
   const data = {
     roomId,
-    date,
+    checkin,
     checkout,
     nights,
     name: document.getElementById("name").value,
     phone: document.getElementById("phone").value,
+    email: document.getElementById("email").value,
     adult: document.getElementById("adult").value,
     child: document.getElementById("child").value,
     pet: document.getElementById("petOption").value === "yes"
           ? document.getElementById("petCount").value
           : 0,
     note: document.getElementById("note").value,
-    line_uid: document.getElementById("line_uid").value
+    line_uid: document.getElementById("line_uid").value,
+    totalAmount: roomData.basePrice * nights
   };
 
   if (!data.name || !data.phone) {
@@ -143,6 +222,7 @@ function submitBooking() {
     return;
   }
 
+  // 送到你的後端（Make.com / GAS）
   fetch("YOUR_API_ENDPOINT", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -157,7 +237,6 @@ function submitBooking() {
   });
 }
 </script>
-
 
 </body>
 </html>
