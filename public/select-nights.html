@@ -107,16 +107,20 @@
 </div>
 
 <script>
+const API = "https://script.google.com/macros/s/AKfycbx72JGTk3CuJe-z4AFdFm6N1OPJO0aIXq0fgjHY0DN1lCq7iHUtgEZu-YB7fiPP1t2J/exec";
+
 let roomId = new URLSearchParams(location.search).get("roomId");
 let date = new URLSearchParams(location.search).get("date");
 
 let selectedNights = null;
 let roomData = null;
 
-// 取得房型資料
+// 從 API 取得房型資料
 async function loadRoom() {
-  const res = await fetch("data/rooms.json");
-  const rooms = await res.json();
+  const res = await fetch(`${API}?action=rooms`);
+  const json = await res.json();
+  const rooms = json.rooms;
+
   roomData = rooms.find(r => r.id === roomId);
 
   document.getElementById("roomInfo").innerHTML = `
@@ -130,15 +134,15 @@ async function loadRoom() {
   renderNights();
 }
 
-// 產生可選晚數按鈕
+// 產生晚數選擇
 function renderNights() {
   const box = document.getElementById("nightsList");
   box.innerHTML = "";
 
-  for (let n = roomData.minNights; n <= roomData.maxNights; n++) {
+  for (let n = Number(roomData.minNights); n <= Number(roomData.maxNights); n++) {
     const btn = document.createElement("div");
     btn.className = "night-btn";
-    btn.innerText = `${n} 晚（$${(roomData.price * n).toLocaleString()}）`;
+    btn.innerText = `${n} 晚（$${(roomData.weekday * n).toLocaleString()}）`;
 
     btn.onclick = () => selectNight(n, btn);
 
@@ -148,26 +152,20 @@ function renderNights() {
 
 function selectNight(n, btnElement) {
   selectedNights = n;
-
-  // 全部移除 active
   [...document.getElementsByClassName("night-btn")].forEach(b =>
     b.classList.remove("night-active")
   );
-
   btnElement.classList.add("night-active");
 
   document.getElementById("nextBtn").disabled = false;
 }
 
-// 下一步 → 填資料
 document.getElementById("nextBtn").onclick = () => {
   const checkoutDate = getCheckoutDate(date, selectedNights);
-
   window.location.href =
     `form.html?roomId=${roomId}&date=${date}&nights=${selectedNights}&checkout=${checkoutDate}`;
 };
 
-// 計算退房日期
 function getCheckoutDate(start, nights) {
   const d = new Date(start);
   d.setDate(d.getDate() + nights);
