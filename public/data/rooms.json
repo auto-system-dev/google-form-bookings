@@ -2,74 +2,41 @@
   {
     "id": "A",
     "title": "A館包棟",
-    "subtitle": "最多 12 人 · 大客廳 · 烤肉區 · 廚房",
-    "description": "適合家庭與團體入住，空間寬敞，含烤肉區與停車位。",
-    "image": "images/a-house.jpg",
-
-    "weekdayPrice": 21000,
-    "weekendPrice": 25000,
-
-    "specialPrice": {
-      "2025-01-01": 28000,
-      "2025-02-28": 30000,
-      "2025-12-31": 35000
-    },
-
+    "subtitle": "舒適包棟空間，適合家庭與團體",
+    "priceWeekday": 21000,
+    "priceWeekend": 25000,
     "minNights": 1,
     "maxNights": 3,
+    "image": "images/a-house.jpg",
 
-    "maxGuests": 12,
+    "specialPrice": {
+      "2025-02-14": 28000,
+      "2025-02-15": 30000
+    },
 
     "disabledDates": [
-      "2025-03-02",
-      "2025-03-03",
-      "2025-03-15"
-    ],
-
-    "amenities": [
-      "WiFi",
-      "免費停車",
-      "烤肉區",
-      "廚房設備",
-      "電視",
-      "冷氣"
+      "2025-02-10",
+      "2025-02-11"
     ]
   },
+
   {
     "id": "B",
     "title": "B館包棟",
-    "subtitle": "最多 16 人 · 獨立庭院 · 大露臺",
-    "description": "擁有大型露臺、獨立庭院，非常適合多人包棟活動。",
-    "image": "images/b-house.jpg",
-
-    "weekdayPrice": 23000,
-    "weekendPrice": 27000,
-
-    "specialPrice": {
-      "2025-01-01": 30000,
-      "2025-02-28": 32000,
-      "2025-12-31": 38000
-    },
-
+    "subtitle": "擁有庭院與烤肉區的高質感包棟",
+    "priceWeekday": 23000,
+    "priceWeekend": 26000,
     "minNights": 1,
     "maxNights": 3,
+    "image": "images/b-house.jpg",
 
-    "maxGuests": 16,
+    "specialPrice": {
+      "2025-02-14": 32000
+    },
 
     "disabledDates": [
-      "2025-03-05",
-      "2025-03-06",
-      "2025-03-20",
-      "2025-03-21"
-    ],
-
-    "amenities": [
-      "WiFi",
-      "免費停車",
-      "獨立庭院",
-      "露臺",
-      "烤肉架",
-      "電視"
+      "2025-02-05",
+      "2025-02-06"
     ]
   }
 ]
