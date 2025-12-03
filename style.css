@@ -1,0 +1,220 @@
+/* Google Material Design – Card Flow Template */
+/* Primary Color: Google Blue #1A73E8 */
+
+:root {
+  --primary: #1A73E8;
+  --primary-light: #4d8ff0;
+  --primary-dark: #0f5dcc;
+  --text: #202124;
+  --text-light: #5f6368;
+  --bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --radius: 14px;
+  --shadow: 0 4px 14px rgba(0,0,0,0.1);
+  --shadow-hover: 0 6px 20px rgba(0,0,0,0.12);
+  font-family: "Noto Sans TC", "Roboto", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.header {
+  background: var(--primary);
+  color: #fff;
+  text-align: center;
+  padding: 18px 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Material Card */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  transition: 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* Title */
+.card-title {
+  font-size: 20px;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+/* Input */
+.field-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+input, select {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: 1px solid #dadce0;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+input:focus, select:focus {
+  border: 2px solid var(--primary);
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: #e8eaed;
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background: #d2d4d6;
+}
+
+/* Room Card */
+.room-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: 0.2s;
+  margin-bottom: 22px;
+}
+
+.room-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.room-card-body {
+  padding: 16px;
+}
+
+.room-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.room-price {
+  font-size: 16px;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.room-btn {
+  padding: 12px 0;
+  background: var(--primary);
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.room-btn.disabled {
+  background: #cfd3d9;
+  cursor: not-allowed;
+}
+
+/* Success Page */
+.success-box {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.success-icon {
+  font-size: 80px;
+  color: var(--primary);
+}
+
+/* Admin Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th {
+  background: var(--primary);
+  color: white;
+  padding: 12px;
+}
+
+.table td {
+  padding: 12px;
+  background: #fff;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+.status-tag {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #fff;
+}
+
+.status-confirmed { background: #1A73E8; }
+.status-pending   { background: #FBBC04; }
+.status-cancelled { background: #EA4335; }
+
+/* Floating Button */
+.fab {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  background: var(--primary);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--shadow-hover);
+  font-size: 28px;
+  cursor: pointer;
+}
