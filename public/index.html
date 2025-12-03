@@ -88,33 +88,49 @@
 const API = "https://script.google.com/macros/s/AKfycbzZRykhI3HrwgaAxKoBu1WASRL5KTyBHGuYzEPaUafrVDu9CMaVSx6XOPz5dG1_CPeU/exec";
 
 async function loadRooms() {
-  const res = await fetch(`${API}?action=rooms`);
-  const json = await res.json();
-
   const list = document.getElementById("roomList");
-  list.innerHTML = "";
+  list.innerHTML = "讀取中...";
 
-  json.rooms.forEach(room => {
-    const card = document.createElement("div");
-    card.className = "room-card";
+  try {
+    // 呼叫 GAS 取得 rooms
+    const res = await fetch(API + "?action=rooms");
+    const data = await res.json();
 
-    card.onclick = () => {
-      window.location.href = `select-date.html?roomId=${room.id}`;
-    };
+    if (!data.success) {
+      list.innerHTML = "無法載入房型資料";
+      return;
+    }
 
-    card.innerHTML = `
-      <img src="${room.image}" class="room-image">
-      <div class="room-info">
-        <div>
-          <div class="room-title">${room.title}</div>
-          <div class="room-price">$${room.weekday} / 每晚</div>
+    const rooms = data.rooms;
+    list.innerHTML = ""; // 清除 "讀取中"
+
+    rooms.forEach(room => {
+      const card = document.createElement("div");
+      card.className = "room-card";
+
+      card.onclick = () => {
+        window.location.href = `select-date.html?roomId=${room.id}`;
+      };
+
+      card.innerHTML = `
+        <img src="${room.image}" class="room-image">
+
+        <div class="room-info">
+          <div>
+            <div class="room-title">${room.title}</div>
+            <div class="room-price">$${room.weekday.toLocaleString()} / 每晚</div>
+          </div>
+          <div class="room-nights">可住：${room.minNights} - ${room.maxNights} 晚</div>
         </div>
-        <div class="room-nights">可住：${room.minNights} - ${room.maxNights} 晚</div>
-      </div>
-    `;
+      `;
 
-    list.appendChild(card);
-  });
+      list.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = "讀取房型資料失敗";
+  }
 }
 
 loadRooms();
