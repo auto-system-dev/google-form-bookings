@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>房型管理後台</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Noto Sans TC", sans-serif;
+    background: #f5f5f5;
+  }
+
+  /* Top bar */
+  .appbar {
+    background: #1976d2;
+    color: white;
+    padding: 18px;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-add {
+    background: white;
+    color: #1976d2;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Room list card */
+  .room-card {
+    background: white;
+    padding: 16px;
+    margin: 16px;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  .room-header {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .small {
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 18px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-edit { background: #e3f2fd; color: #1976d2; }
+  .btn-delete { background: #ffebee; color: #c62828; }
+
+  /* Modal background */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Modal box */
+  .modal-box {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    padding: 22px;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .form-row {
+    margin-bottom: 12px;
+  }
+
+  .form-row label {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .form-row input,
+  .form-row textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .row-group {
+    background: #fafafa;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .modal-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btn-cancel { background: #eee; }
+  .btn-save { background: #1976d2; color: white; }
+
+  .tag-special {
+    background: #fff3cd;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Top bar -->
+<div class="appbar">
+  房型管理後台
+  <div class="btn-add" onclick="openAddRoom()">＋ 新增房型</div>
+</div>
+
+<!-- Room list -->
+<div id="roomList"></div>
+
+<!-- Modal -->
+<div class="modal-bg" id="roomModal">
+  <div class="modal-box">
+
+    <div class="modal-title" id="modalTitle">新增房型</div>
+
+    <div class="form-row">
+      <label>房型 ID</label>
+      <input id="roomId">
+    </div>
+
+    <div class="form-row">
+      <label>房型名稱</label>
+      <input id="roomTitle">
+    </div>
+
+    <div class="form-row">
+      <label>房型描述</label>
+      <textarea id="roomDesc" rows="3"></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>圖片 URL</label>
+      <input id="roomImage">
+    </div>
+
+    <!-- 價格 -->
+    <div class="row-group">
+      <div class="subtitle">房價設定</div>
+
+      <div class="form-row">
+        <label>平日價格</label>
+        <input id="priceWeekday" type="number">
+      </div>
+
+      <div class="form-row">
+        <label>假日價格</label>
+        <input id="priceWeekend" type="number">
+      </div>
+
+      <div class="form-row">
+        <label>最少入住天數</label>
+        <input id="minNights" type="number">
+      </div>
+
+      <div class="form-row">
+        <label>最多入住天數</label>
+        <input id="maxNights" type="number">
+      </div>
+    </div>
+
+    <!-- 人數 -->
+    <div class="row-group">
+      <div class="subtitle">人數設定</div>
+
+      <div class="form-row">
+        <label>最多入住人數</label>
+        <input id="maxGuests" type="number">
+      </div>
+
+      <div class="form-row">
+        <label>標準入住人數</label>
+        <input id="standardGuests" type="number">
+      </div>
+
+      <div class="form-row">
+        <label>超出標準（大人）加價</label>
+        <input id="extraAdultPrice" type="number">
+      </div>
+
+      <div class="form-row">
+        <label>超出標準（小孩）加價</label>
+        <input id="extraChildPrice" type="number">
+      </div>
+    </div>
+
+    <!-- 日期設定 -->
+    <div class="row-group">
+      <div class="subtitle">不可訂日期（disabledDates）</div>
+      <textarea id="disabledDates" rows="2" placeholder="每行一個日期，例如：2025-02-10"></textarea>
+    </div>
+
+    <div class="row-group">
+      <div class="subtitle">停業日期（closedDates）</div>
+      <textarea id="closedDates" rows="2"></textarea>
+    </div>
+
+    <!-- 特殊日價格 -->
+    <div class="row-group">
+      <div class="subtitle">特殊價格（specialPrice）</div>
+      <textarea id="specialPrice" rows="3" placeholder="格式：2025-12-31:45000"></textarea>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn btn-save" onclick="saveRoom()">儲存</button>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+/* ---------------------------------------------------
+    Firebase 初始化
+--------------------------------------------------- */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs,
+  addDoc, doc, updateDoc, deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCnytMF9E5kgjadIe8EpKYoWCqsAVR93I0",
+  authDomain: "form-booking-8fb46.firebaseapp.com",
+  projectId: "form-booking-8fb46",
+  storageBucket: "form-booking-8fb46.appspot.com",
+  messagingSenderId: "866268132852",
+  appId: "1:866268132852:web:566f1fe2d79cacabd6b5a1",
+  measurementId: "G-J1RNH6VBTG"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* ---------------------------------------------------
+    全域變數
+--------------------------------------------------- */
+
+let editingId = null;
+
+/* ---------------------------------------------------
+    打開 / 關閉 Modal
+--------------------------------------------------- */
+
+function openAddRoom() {
+  editingId = null;
+  document.getElementById("modalTitle").innerText = "新增房型";
+  document.getElementById("roomId").value = "";
+  document.getElementById("roomTitle").value = "";
+  document.getElementById("roomDesc").value = "";
+  document.getElementById("roomImage").value = "";
+  document.getElementById("priceWeekday").value = "";
+  document.getElementById("priceWeekend").value = "";
+  document.getElementById("minNights").value = "";
+  document.getElementById("maxNights").value = "";
+  document.getElementById("maxGuests").value = "";
+  document.getElementById("standardGuests").value = "";
+  document.getElementById("extraAdultPrice").value = "";
+  document.getElementById("extraChildPrice").value = "";
+  document.getElementById("disabledDates").value = "";
+  document.getElementById("closedDates").value = "";
+  document.getElementById("specialPrice").value = "";
+
+  document.getElementById("roomModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("roomModal").style.display = "none";
+}
+
+/* ---------------------------------------------------
+    顯示房型列表
+--------------------------------------------------- */
+
+async function loadRooms() {
+  const listDiv = document.getElementById("roomList");
+  listDiv.innerHTML = "";
+
+  const docsSnap = await getDocs(collection(db, "rooms"));
+
+  docsSnap.forEach(docItem => {
+    const r = docItem.data();
+
+    const card = document.createElement("div");
+    card.className = "room-card";
+
+    card.innerHTML = `
+      <div class="room-header">${r.title}（${r.id}）</div>
+      <div class="small">${r.description}</div>
+
+      <div class="card-actions">
+        <button class="btn btn-edit" onclick="editRoom('${docItem.id}')">
+          <span class="material-icons">edit</span> 編輯
+        </button>
+
+        <button class="btn btn-delete" onclick="deleteRoom('${docItem.id}')">
+          <span class="material-icons">delete</span> 刪除
+        </button>
+      </div>
+    `;
+
+    listDiv.appendChild(card);
+  });
+}
+
+/* ---------------------------------------------------
+    編輯房型
+--------------------------------------------------- */
+
+window.editRoom = async function(id) {
+  editingId = id;
+
+  const all = await getDocs(collection(db, "rooms"));
+  let target = null;
+  all.forEach(d => {
+    if (d.id === id) target = { id: d.id, ...d.data() };
+  });
+
+  if (!target) return;
+
+  document.getElementById("modalTitle").innerText = "編輯房型";
+
+  document.getElementById("roomId").value = target.id;
+  document.getElementById("roomTitle").value = target.title;
+  document.getElementById("roomDesc").value = target.description;
+  document.getElementById("roomImage").value = target.image;
+
+  document.getElementById("priceWeekday").value = target.priceWeekday;
+  document.getElementById("priceWeekend").value = target.priceWeekend;
+  document.getElementById("minNights").value = target.minNights;
+  document.getElementById("maxNights").value = target.maxNights;
+
+  document.getElementById("maxGuests").value = target.maxGuests;
+  document.getElementById("standardGuests").value = target.standardGuests;
+  document.getElementById("extraAdultPrice").value = target.extraAdultPrice;
+  document.getElementById("extraChildPrice").value = target.extraChildPrice;
+
+  document.getElementById("disabledDates").value =
+    (target.disabledDates || []).join("\n");
+
+  document.getElementById("closedDates").value =
+    (target.closedDates || []).join("\n");
+
+  let sp = "";
+  if (target.specialPrice) {
+    Object.keys(target.specialPrice).forEach(k => {
+      sp += `${k}:${target.specialPrice[k]}\n`;
+    });
+  }
+
+  document.getElementById("specialPrice").value = sp;
+
+  document.getElementById("roomModal").style.display = "flex";
+};
+
+/* ---------------------------------------------------
+    儲存房型
+--------------------------------------------------- */
+
+window.saveRoom = async function() {
+
+  const data = {
+    id: document.getElementById("roomId").value,
+    title: document.getElementById("roomTitle").value,
+    description: document.getElementById("roomDesc").value,
+    image: document.getElementById("roomImage").value,
+
+    priceWeekday: Number(document.getElementById("priceWeekday").value),
+    priceWeekend: Number(document.getElementById("priceWeekend").value),
+    minNights: Number(document.getElementById("minNights").value),
+    maxNights: Number(document.getElementById("maxNights").value),
+
+    maxGuests: Number(document.getElementById("maxGuests").value),
+    standardGuests: Number(document.getElementById("standardGuests").value),
+    extraAdultPrice: Number(document.getElementById("extraAdultPrice").value),
+    extraChildPrice: Number(document.getElementById("extraChildPrice").value),
+
+    disabledDates:
+      document.getElementById("disabledDates").value
+      .split("\n").map(s => s.trim()).filter(x => x),
+
+    closedDates:
+      document.getElementById("closedDates").value
+      .split("\n").map(s => s.trim()).filter(x => x),
+  };
+
+  // 特殊價格
+  let spLines = document.getElementById("specialPrice").value.split("\n");
+  let spObj = {};
+
+  spLines.forEach(l => {
+    if (l.includes(":")) {
+      const [d, p] = l.split(":");
+      spObj[d.trim()] = Number(p.trim());
+    }
+  });
+
+  data.specialPrice = spObj;
+
+  if (editingId) {
+    await updateDoc(doc(db, "rooms", editingId), data);
+  } else {
+    await addDoc(collection(db, "rooms"), data);
+  }
+
+  closeModal();
+  loadRooms();
+};
+
+/* ---------------------------------------------------
+    刪除房型
+--------------------------------------------------- */
+
+window.deleteRoom = async function(id) {
+  if (!confirm("確定要刪除這個房型？")) return;
+
+  await deleteDoc(doc(db, "rooms", id));
+  loadRooms();
+};
+
+/* ---------------------------------------------------
+    初始化
+--------------------------------------------------- */
+
+loadRooms();
+
+</script>
+</body>
+</html>
