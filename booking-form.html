@@ -48,113 +48,81 @@
 
 </div>
 
-<script>
-// 取得 localStorage
-const checkin   = localStorage.getItem("checkin");
-const nights    = Number(localStorage.getItem("nights"));
-const adult     = localStorage.getItem("adult");
-const child     = localStorage.getItem("child");
-const pet       = localStorage.getItem("pet");
-const roomId    = localStorage.getItem("selected_room");
+<script src="api.js"></script>
 
-// 若資料不齊 → 回首頁
+<script>
+// 讀 localStorage
+const checkin = localStorage.getItem("checkin");
+const nights  = Number(localStorage.getItem("nights"));
+const roomId  = localStorage.getItem("selected_room");
+
 if (!checkin || !roomId) {
-  alert("請先重新選擇預約資訊");
+  alert("請重新選擇預約資訊");
   window.location.href = "index.html";
 }
 
-// 計算退房日
-function addDays(dateStr, days) {
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() + days);
-  return d.toISOString().split("T")[0];
-}
 const checkout = addDays(checkin, nights);
-
-// DOM
 const roomSummary = document.getElementById("roomSummary");
 
-// 載入房型資訊
+// 讀取房型資料
 async function loadRoomInfo() {
-  const rooms = await apiGet("/rooms");
-  const room = rooms.find(r => r.room_id == roomId);
+  const roomData = await apiGet("?action=rooms");
+  const room = roomData.rooms.find(r => r.room_id == roomId);
 
-  if (!room) {
-    roomSummary.innerHTML = `<div class="card-title">房型不存在</div>`;
-    return;
-  }
-
-  // 金額 = 每晚價格 x 夜數
   const amount = room.price * nights;
 
-  // 填入卡片
   roomSummary.innerHTML = `
-    <img src="${room.image || 'assets/room-default.jpg'}" 
-         style="width:100%; height:200px; object-fit:cover; border-radius:14px; margin-bottom:14px;">
-
+    <img src="${room.image || 'assets/room-default.jpg'}" style="width:100%; height:200px; object-fit:cover; border-radius:14px; margin-bottom:14px;">
     <div class="card-title">${room.name}</div>
-
-    <div style="margin-bottom: 8px;"><b>入住：</b> ${checkin}</div>
-    <div style="margin-bottom: 8px;"><b>退房：</b> ${checkout}</div>
-    <div style="margin-bottom: 8px;"><b>夜數：</b> ${nights} 晚</div>
-    <div style="margin-bottom: 8px;"><b>人數：</b> 成人 ${adult}、小孩 ${child}、寵物 ${pet}</div>
-
-    <div style="color:#1A73E8; font-size:20px; margin-top:12px;">
+    <div><b>入住</b>：${checkin}</div>
+    <div><b>退房</b>：${checkout}</div>
+    <div><b>夜數</b>：${nights} 晚</div>
+    <div style="margin-top:12px; color:#1A73E8; font-size:20px;">
       <b>總金額：NT$ ${amount}</b>
     </div>
   `;
 
-  // 暫存供提交使用
   roomSummary.dataset.amount = amount;
 }
-
 loadRoomInfo();
 
 // 送出預約
 document.getElementById("submitBtn").addEventListener("click", async () => {
-  const name  = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const note  = document.getElementById("note").value.trim();
+  const name  = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const note  = document.getElementById("note").value;
+  const amount = roomSummary.dataset.amount;
 
   if (!name || !phone) {
     alert("請填寫完整資料");
     return;
   }
 
-  const amount = roomSummary.dataset.amount;
-
   const payload = {
     room_id: roomId,
     checkin,
     checkout,
     nights,
-    adult,
-    child,
-    pet,
     name,
     phone,
     note,
-    amount,
-    uid: document.getElementById("line_uid").value || "",
-    email: document.getElementById("line_email").value || ""
+    adult: localStorage.getItem("adult"),
+    child: localStorage.getItem("child"),
+    pet: localStorage.getItem("pet"),
+    amount
   };
 
-  try {
-    const res = await apiPost("?action=createBooking", payload);
+  const res = await apiPost("?action=createBooking", payload);
 
-    if (res.success) {
-      localStorage.setItem("order_id", res.order_id);
-      window.location.href = "result.html";
-    } else {
-      alert("預約失敗：" + res.message);
-    }
-
-  } catch (e) {
-    console.error(e);
-    alert("預約發生錯誤");
+  if (res.success) {
+    localStorage.setItem("order_id", res.order_id);
+    window.location.href = "result.html";
+  } else {
+    alert("預約失敗：" + res.message);
   }
 });
 </script>
+
 
 </body>
 </html>
