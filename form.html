@@ -32,33 +32,37 @@ form,
   margin:0 auto 24px;
 }
 
-/* 🔥🔥🔥 你要的重點在下面 🔥🔥🔥 */
-/* === 手機版 (真正置中 + 左右等距，不會貼滿邊) === */
-@media (max-width:768px){
-  .page-container{
-    max-width:100%;          /* 📌 非滿版，縮成容器 */
-    padding-left:0;
-    padding-right:0;
-    align-items:center;      /* ✔ 水平置中 */
-  }
-
+/* =========================
+   📱 手機最佳瀏覽寬度優化
+========================= */
+@media (max-width:768px) {
   .info-box,
   form,
-  .btn{
-    max-width:100%;          /* ✔ 與外容器一致，左右對齊 */
+  .btn {
+    max-width:92%;      /* ⭐ 手機最佳寬度（推薦） */
     margin-left:auto;
     margin-right:auto;
   }
-}
 
-@media (max-width:480px){
-  .page-container,
-  .info-box,
-  form,
-  .btn{
-    max-width:92%;          /* 📌 更小螢幕微放大，但仍置中 */
+  input, textarea, select {
+    font-size:16px;
+    padding:14px;
   }
 }
+
+@media (max-width:480px) {
+  .info-box,
+  form,
+  .btn {
+    max-width:94%;      /* ⭐ 更小螢幕微放大，仍置中 */
+  }
+
+  .btn {
+    font-size:18px;     /* 手感更好 */
+    padding:16px;
+  }
+}
+
 
 /* ===== 訂單摘要 ===== */
 .info-box{
