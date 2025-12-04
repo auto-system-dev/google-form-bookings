@@ -1,0 +1,65 @@
+body{
+  margin:0;
+  background:#F7F9FC;
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+}
+
+/* Header */
+.topbar{
+  background:#0D6EFD;
+  color:#fff;
+  text-align:center;
+  padding:22px;
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+/* Form Card */
+.form-box{
+  background:#fff;
+  max-width:500px;
+  padding:30px;
+  margin:40px auto;
+  border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+h2{
+  margin:22px 0 8px;
+  color:#0D6EFD;
+  font-size:18px;
+  font-weight:800;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #bbb;
+  font-size:16px;
+}
+
+textarea{height:90px;}
+
+button{
+  width:100%;
+  background:#0D6EFD;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  padding:14px;
+  border-radius:10px;
+  border:none;
+  margin-top:20px;
+  cursor:pointer;
+  transition:.2s;
+}
+button:hover{background:#0B5ED7;}
+
+.message{
+  margin-top:15px;
+  text-align:center;
+  font-weight:700;
+  color:#0B5ED7;
+}
