@@ -12,27 +12,44 @@
   margin:0;
 }
 
-/* === 整頁容器（決定整體寬度）=== */
+/* ★ 桌機版本寬度 */
 .page-container{
   width:100%;
+  max-width:660px;
   margin:auto;
   padding:25px 16px;
   box-sizing:border-box;
   display:flex;
   flex-direction:column;
-  align-items:center; /* ← 強制內容置中對齊 */
+  align-items:center;
 }
 
-/* === 讓資訊卡、表單、按鈕全部一條線 === */
-.info-box,
-form,
-.btn{
-  width:100%;         /* 讓所有內容等寬 */
-  max-width:660px;    /* 與 page-container 完全一致 ✔ */
+/* ★ 內容模組寬度統一 */
+.info-box,form,.btn{
+  width:100%;
+  max-width:660px;
   margin:0 auto 24px;
 }
 
-/* === 訂單摘要卡 === */
+/* 🔥 手機版置中優化 —— 重點修正 */
+@media (max-width:768px){
+  .page-container,
+  .info-box,
+  form,
+  .btn {
+    max-width:92%;       /* ← 你希望手機縮多少都可調整 */
+  }
+}
+@media (max-width:480px){
+  .page-container,
+  .info-box,
+  form,
+  .btn {
+    max-width:94%;       /* ← 小螢幕再放寬一些更順手 */
+  }
+}
+
+/* ===== 訂單摘要 ===== */
 .info-box{
   background:#fff;
   border-radius:14px;
@@ -42,7 +59,7 @@ form,
   line-height:1.7;
 }
 
-/* === 表單 === */
+/* ===== 表單 ===== */
 form{
   background:#fff;
   padding:22px 22px 30px;
@@ -66,10 +83,9 @@ input:focus,textarea:focus,select:focus{
   border-color:#1a73e8;
   box-shadow:0 0 0 3px rgba(26,115,232,.2);
 }
-
 textarea{height:95px}
 
-/* === 送出按鈕 === */
+/* ===== 按鈕 ===== */
 .btn{
   background:#1a73e8;
   color:white;
@@ -82,6 +98,7 @@ textarea{height:95px}
   margin-top:10px;
 }
 .btn:hover{opacity:.86;}
+
 
 </style>
 </head>
