@@ -2,21 +2,41 @@
   {
     "id": "A",
     "title": "A館包棟",
-    "price": 21000,
+    "subtitle": "舒適包棟空間，適合家庭與團體",
+    "priceWeekday": 21000,
+    "priceWeekend": 25000,
     "minNights": 1,
     "maxNights": 3,
     "image": "images/a-house.jpg",
-    "description": "A館包棟，適合家庭與團體入住，提供舒適的大空間與完善設施。",
-    "maxGuests": 12
+
+    "specialPrice": {
+      "2025-02-14": 28000,
+      "2025-02-15": 30000
+    },
+
+    "disabledDates": [
+      "2025-02-10",
+      "2025-02-11"
+    ]
   },
+
   {
     "id": "B",
     "title": "B館包棟",
-    "price": 23000,
+    "subtitle": "擁有庭院與烤肉區的高質感包棟",
+    "priceWeekday": 23000,
+    "priceWeekend": 26000,
     "minNights": 1,
     "maxNights": 3,
     "image": "images/b-house.jpg",
-    "description": "B館包棟，擁有獨立庭院、烤肉區，適合派對與多人團聚。",
-    "maxGuests": 16
+
+    "specialPrice": {
+      "2025-02-14": 32000
+    },
+
+    "disabledDates": [
+      "2025-02-05",
+      "2025-02-06"
+    ]
   }
 ]
