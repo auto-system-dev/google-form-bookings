@@ -1,73 +1,70 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<title>確認訂房</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="assets/style.css">
+<meta charset="utf-8">
+<title>線上訂房｜Google Reserve Style</title>
+<style>
+body{font-family:"Noto Sans TC";background:#f8f8f8;margin:0;}
+.container{max-width:600px;margin:auto;background:white;padding:24px;border-radius:14px;margin-top:30px;}
+.room{border:1px solid #ddd;border-radius:10px;padding:12px;margin-bottom:14px;}
+button{width:100%;background:#007AFF;color:#fff;font-size:18px;padding:12px;border-radius:8px;border:none;cursor:pointer;}
+</style>
 </head>
 
 <body>
-<header><h2>填寫訂房資料</h2></header>
+<div class="container">
+<h2>選擇房型</h2>
+<div id="roomList"></div>
 
-<section class="card">
+<h3>訂房資訊</h3>
+<input id="name" placeholder="姓名" style="width:100%;padding:10px;"><br><br>
+<input id="phone" placeholder="手機" style="width:100%;padding:10px;"><br><br>
+<input id="date" type="date" style="width:100%;padding:10px;"><br><br>
+<input id="nights" type="number" value="1" style="width:100%;padding:10px;"><br><br>
 
-  <div id="roomInfo"></div>
-
-  <label>姓名 *</label>
-  <input id="name" required>
-
-  <label>手機 *</label>
-  <input id="phone" required placeholder="0912345678">
-
-  <label>Email</label>
-  <input id="email">
-
-  <label>備註</label>
-  <textarea id="note"></textarea>
-
-  <button onclick="submitBooking()">送出訂單 ✔</button>
-</section>
+<button onclick="book()">立即訂房</button>
+</div>
 
 <script>
-const url=new URL(location.href);
-const room=url.searchParams.get("room");
-const ci=url.searchParams.get("ci");
-const co=url.searchParams.get("co");
+const API = "https://script.google.com/macros/s/AKfycbzqoQqCiT1z8AGWXlKmRBYGC9JJSq1ozkGV8evwBDlMjmiZ6e7vXJNNDTHcJgmUg6ZJ/exec";
 
-async function loadRoom(){
-  const res= await fetch(`/api/rooms?id=${room}`);
-  const r= (await res.json()).room;
-
-  document.getElementById("roomInfo").innerHTML=
-  `<h3>${r.title}</h3>
-   <p>${r.desc}</p>
-   <p>入住：${ci} → 退房：${co}</p>
-   <strong>價格：NT$${r.price}</strong>`;
-}
-loadRoom();
-
-async function submitBooking(){
-  const body={
-    room_id:room,
-    date_start:ci,
-    date_end:co,
-    name:name.value,
-    phone:phone.value,
-    email:email.value,
-    note:note.value
-  };
-
-  const res=await fetch("/api/createBooking",{
-    method:"POST",
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  });
-
+async function loadRooms(){
+  const res = await fetch(`${API}?action=rooms`);
   const data = await res.json();
-  alert(data.success ? "預訂成功!" : "失敗 請稍後再試");
+  const list = document.querySelector("#roomList");
+  data.rooms.forEach(r=>{
+    list.innerHTML+=`
+    <div class="room">
+      <b>${r.name}</b><br>
+      $${r.price} / 晚 <br>
+      可入住：${r.capacity} 人
+      <button onclick="selectRoom('${r.room_id}',${r.price})">選擇</button>
+    </div>`;
+  })
+}
+loadRooms();
+
+let selectedRoom=null,roomPrice=0;
+
+function selectRoom(id,price){
+  selectedRoom=id; roomPrice=price;
+  alert("已選擇：" + id);
+}
+
+async function book(){
+  const total = roomPrice * document.getElementById("nights").value;
+  const body = {
+    action:"createBooking",
+    name:document.getElementById("name").value,
+    phone:document.getElementById("phone").value,
+    date:document.getElementById("date").value,
+    nights:document.getElementById("nights").value,
+    room_id:selectedRoom,total
+  };
+  const res = await fetch(API,{method:"POST",body:JSON.stringify(body)});
+  const data = await res.json();
+  alert("訂房成功！訂單編號：" + data.booking_id);
 }
 </script>
-
 </body>
 </html>
