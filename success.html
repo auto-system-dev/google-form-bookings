@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>訂房完成</title>
+<style>
+body{text-align:center;font-family:"Noto Sans TC";padding-top:60px;}
+h1{color:#34A853;font-size:28px;}
+p{font-size:18px;margin-top:12px;}
+</style>
+</head>
+
+<body>
+<h1>🎉訂房成功！</h1>
+<p>訂單編號：<span id="id"></span></p>
+<p>總金額：NT$ <span id="price"></span></p>
+
+<script>
+const p=new URLSearchParams(location.search);
+id.innerText=p.get("id");
+price.innerText=p.get("price");
+</script>
+</body>
+</html>
