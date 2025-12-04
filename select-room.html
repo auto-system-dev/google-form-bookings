@@ -1,23 +1,67 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>選擇房型</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="stylesheet" href="style.css">
+<script src="api.js"></script> <!-- 你的 API 連線層 -->
 </head>
 
 <body>
 
 <header>選擇房型</header>
 
-<div id="roomList" class="room-list">
-  <div class="loading">載入中...</div>
-</div>
+<div class="room-list" id="roomList">載入中…</div>
 
-<script src="api.js"></script>
-<script src="app.js"></script>
+
+<script>
+/* 讀取房型資料 */
+loadRooms();
+
+async function loadRooms(){
+  try{
+    const res = await getRooms(); // <-- api.js 取得 GAS Rooms
+    renderRoomList(res.rooms);
+  }catch(e){
+    document.querySelector("#roomList").innerHTML = 
+      `<div style="text-align:center;color:#666;padding:60px 0;">資料載入失敗，請稍後再試</div>`;
+  }
+}
+
+/* 產生房型卡片 UI */
+function renderRoomList(list){
+  const box = document.querySelector("#roomList");
+  box.innerHTML = "";
+
+  list.forEach(r => {
+    let remain = r.stock || 0;
+
+    box.innerHTML += `
+    <div class="card">
+      <img class="card-img" src="${r.image}" alt="${r.name}">
+
+      <div class="card-body">
+        <div class="room-name">${r.name}</div>
+        <div class="room-price">NT$${r.price}/晚</div>
+
+        <div class="room-btn" onclick="selectRoom('${r.room_id}','${r.name}',${r.price})">
+          ${ remain > 0 ? "選擇此房型" : "已額滿" }
+        </div>
+      </div>
+    </div>
+    `;
+  });
+}
+
+/* 點擊寫入 localStorage → 進入下一步 */
+function selectRoom(id,name,price){
+  localStorage.setItem("room_id",id);
+  localStorage.setItem("room_name",name);
+  localStorage.setItem("room_price",price);
+
+  location.href="booking-form.html";
+}
+</script>
 
 </body>
 </html>
