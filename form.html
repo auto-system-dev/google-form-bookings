@@ -1,163 +1,198 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>填寫預約資料</title>
-
-<!-- LIFF SDK -->
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <style>
   body {
-    margin: 0;
     font-family: "Noto Sans TC", sans-serif;
     background: #f5f5f5;
+    padding: 20px;
   }
 
-  .container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 16px;
-  }
-
-  .title {
-    font-size: 22px;
+  h2 {
+    font-size: 24px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
   }
 
-  .info-box, .form-box {
-    background: #fff;
+  .info-box {
+    background: white;
+    padding: 18px;
     border-radius: 12px;
-    padding: 16px;
-    border: 1px solid #e6e6e6;
-    margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
   }
 
-  .label {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 4px;
+  .info-box div {
+    margin-bottom: 8px;
+    font-size: 16px;
   }
 
-  .value {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 10px;
+  .field {
+    margin-bottom: 18px;
   }
 
-  input, textarea {
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  input, textarea, select {
     width: 100%;
     padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+    border-radius: 12px;
+    border: 1px solid #ccc;
     font-size: 16px;
-    margin-bottom: 14px;
-    box-sizing: border-box;
+    background: white;
   }
 
-  textarea { height: 100px; resize: vertical; }
+  textarea {
+    height: 90px;
+  }
 
   .btn {
     width: 100%;
-    padding: 14px;
+    background: #007bff;
+    color: white;
+    padding: 15px;
     border-radius: 10px;
-    background: #1a73e8;
-    color: #fff;
-    font-size: 17px;
-    border: none;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
     cursor: pointer;
+    margin-top: 25px;
   }
-</style>
 
+  .btn:active { opacity: 0.85; }
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<h2>填寫預約資料</h2>
 
-  <div class="title">填寫預約資料</div>
-
-  <div id="info" class="info-box"></div>
-
-  <div class="form-box">
-
-  <label class="label">姓名（必填）</label>
-  <input type="text" id="name" required />
-
-  <label class="label">手機號碼（必填）</label>
-  <input type="tel" id="phone" maxlength="10" placeholder="0912345678" required />
-
-  <label class="label">大人人數</label>
-  <input type="number" id="adult" min="1" value="1" />
-
-  <label class="label">小孩人數</label>
-  <input type="number" id="child" min="0" value="0" />
-
-  <label class="label">是否攜帶寵物</label>
-  <select id="petOption" onchange="togglePetCount()">
-    <option value="no">否</option>
-    <option value="yes">是</option>
-  </select>
-
-  <div id="petCountBox" style="display:none; margin-top:10px;">
-    <label class="label">寵物數量</label>
-    <input type="number" id="petCount" min="1" value="1" />
-  </div>
-
-  <label class="label">備註（選填）</label>
-  <textarea id="note"></textarea>
-
-  <input type="hidden" id="line_uid" />
-
-  <button class="btn" onclick="submitBooking()">送出預約</button>
+<!-- 訂單摘要 -->
+<div class="info-box">
+  <div>房型：<span id="roomTitle"></span></div>
+  <div>入住：<span id="checkin"></span></div>
+  <div>退房：<span id="checkout"></span></div>
+  <div>晚數：<span id="nights"></span></div>
+  <div>總金額：<span id="total"></span></div>
 </div>
 
+<!-- 表單 -->
+<form id="bookingForm">
+
+  <div class="field">
+    <label>姓名（必填）</label>
+    <input type="text" id="name" required>
+  </div>
+
+  <div class="field">
+    <label>手機號碼（必填）</label>
+    <input type="tel" id="phone" required placeholder="0912345678">
+  </div>
+
+  <div class="field">
+    <label>Email（選填）</label>
+    <input type="email" id="email">
+  </div>
+
+  <div class="field">
+    <label>大人人數</label>
+    <input type="number" id="adult" min="1" value="1">
+  </div>
+
+  <div class="field">
+    <label>小孩人數</label>
+    <input type="number" id="child" min="0" value="0">
+  </div>
+
+  <div class="field">
+    <label>是否攜帶寵物</label>
+    <select id="pet">
+      <option value="無">無</option>
+      <option value="有">有</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>備註</label>
+    <textarea id="note"></textarea>
+  </div>
+
+</form>
+
+<div class="btn" id="submitBtn">送出預約</div>
+
 <script>
-function togglePetCount() {
-  const isPet = document.getElementById("petOption").value;
-  document.getElementById("petCountBox").style.display =
-    isPet === "yes" ? "block" : "none";
+/* 取得 URL 參數 */
+const params = new URLSearchParams(location.search);
+const roomId = params.get("roomId");
+const checkIn = params.get("date");
+const nights = Number(params.get("nights"));
+
+/* 計算退房日期 */
+let checkout = "-";
+if (checkIn && nights) {
+  const d = new Date(checkIn);
+  d.setDate(d.getDate() + nights);
+  checkout = d.toISOString().split("T")[0];
 }
 
-function submitBooking() {
-  const data = {
-    roomId,
-    date,
-    checkout,
-    nights,
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    adult: document.getElementById("adult").value,
-    child: document.getElementById("child").value,
-    pet: document.getElementById("petOption").value === "yes"
-          ? document.getElementById("petCount").value
-          : 0,
-    note: document.getElementById("note").value,
-    line_uid: document.getElementById("line_uid").value
-  };
+document.getElementById("checkin").innerText = checkIn ?? "-";
+document.getElementById("checkout").innerText = checkout ?? "-";
+document.getElementById("nights").innerText = nights ?? "-";
 
-  if (!data.name || !data.phone) {
-    alert("請填寫姓名與手機！");
-    return;
+/* 讀取房型資料並計算金額 */
+async function loadRoom() {
+  const res = await fetch("data/rooms.json");
+  const rooms = await res.json();
+  const room = rooms.find(r => r.id === roomId);
+
+  document.getElementById("roomTitle").innerText = room.title;
+
+  // 計算總金額
+  let total = 0;
+  const startDate = new Date(checkIn);
+
+  for (let i = 0; i < nights; i++) {
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const key = `${y}-${m}-${dd}`;
+
+    if (room.specialPrice && room.specialPrice[key]) {
+      total += room.specialPrice[key];
+      continue;
+    }
+
+    const w = d.getDay();
+    if (w === 0 || w === 6) {
+      total += room.priceWeekend;
+    } else {
+      total += room.priceWeekday;
+    }
   }
 
-  fetch("YOUR_API_ENDPOINT", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-  .then(() => {
-    window.location.href = "done.html";
-  })
-  .catch(err => {
-    alert("預約送出失敗，請稍後再試！");
-    console.error(err);
-  });
+  document.getElementById("total").innerText = "NT$ " + total.toLocaleString();
 }
-</script>
 
+loadRoom();
+
+/* 送出（這裡你可改成串 Google Sheet / GAS / Make） */
+document.getElementById("submitBtn").onclick = () => {
+  alert("預約資料已送出！（此為示範，尚未串接後端）");
+};
+</script>
 
 </body>
 </html>
