@@ -82,65 +82,45 @@
   <div id="info" class="info-box"></div>
 
   <div class="form-box">
-    <label class="label">姓名（必填）</label>
-    <input type="text" id="name" required />
 
-    <label class="label">手機號碼（必填）</label>
-    <input type="tel" id="phone" maxlength="10" placeholder="0912345678" required />
+  <label class="label">姓名（必填）</label>
+  <input type="text" id="name" required />
 
-    <label class="label">備註（選填）</label>
-    <textarea id="note"></textarea>
+  <label class="label">手機號碼（必填）</label>
+  <input type="tel" id="phone" maxlength="10" placeholder="0912345678" required />
 
-    <input type="hidden" id="line_uid" />
-    <button class="btn" onclick="submitBooking()">送出預約</button>
+  <label class="label">大人人數</label>
+  <input type="number" id="adult" min="1" value="1" />
+
+  <label class="label">小孩人數</label>
+  <input type="number" id="child" min="0" value="0" />
+
+  <label class="label">是否攜帶寵物</label>
+  <select id="petOption" onchange="togglePetCount()">
+    <option value="no">否</option>
+    <option value="yes">是</option>
+  </select>
+
+  <div id="petCountBox" style="display:none; margin-top:10px;">
+    <label class="label">寵物數量</label>
+    <input type="number" id="petCount" min="1" value="1" />
   </div>
 
+  <label class="label">備註（選填）</label>
+  <textarea id="note"></textarea>
+
+  <input type="hidden" id="line_uid" />
+
+  <button class="btn" onclick="submitBooking()">送出預約</button>
 </div>
 
 <script>
-// ---- 取得網址參數 ----
-const params = new URLSearchParams(location.search);
-const roomId   = params.get("roomId");
-const date     = params.get("date");
-const nights   = params.get("nights");
-const checkout = params.get("checkout");
-
-// ---- 渲染房型資訊 ----
-async function loadInfo() {
-  const res = await fetch("data/rooms.json");
-  const rooms = await res.json();
-  const room = rooms.find(r => r.id === roomId);
-
-  document.getElementById("info").innerHTML = `
-    <div class="label">房型</div>
-    <div class="value">${room.title}</div>
-
-    <div class="label">入住日期</div>
-    <div class="value">${date}</div>
-
-    <div class="label">退房日期</div>
-    <div class="value">${checkout}</div>
-
-    <div class="label">入住晚數</div>
-    <div class="value">${nights} 晚</div>
-
-    <div class="label">總金額</div>
-    <div class="value">$${(room.price * nights).toLocaleString()}</div>
-  `;
+function togglePetCount() {
+  const isPet = document.getElementById("petOption").value;
+  document.getElementById("petCountBox").style.display =
+    isPet === "yes" ? "block" : "none";
 }
 
-// ---- 初始化 LIFF，取得 userId ----
-async function initLIFF() {
-  await liff.init({ liffId: "YOUR_LIFF_ID" });
-  const profile = await liff.getProfile();
-  document.getElementById("line_uid").value = profile.userId;
-}
-
-initLIFF();
-loadInfo();
-
-
-// ---- 送出預約 ----
 function submitBooking() {
   const data = {
     roomId,
@@ -149,6 +129,11 @@ function submitBooking() {
     nights,
     name: document.getElementById("name").value,
     phone: document.getElementById("phone").value,
+    adult: document.getElementById("adult").value,
+    child: document.getElementById("child").value,
+    pet: document.getElementById("petOption").value === "yes"
+          ? document.getElementById("petCount").value
+          : 0,
     note: document.getElementById("note").value,
     line_uid: document.getElementById("line_uid").value
   };
@@ -158,14 +143,12 @@ function submitBooking() {
     return;
   }
 
-  // 送到你的後端（Make.com / GAS）
   fetch("YOUR_API_ENDPOINT", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   })
   .then(() => {
-    // 導向完成頁
     window.location.href = "done.html";
   })
   .catch(err => {
@@ -173,8 +156,8 @@ function submitBooking() {
     console.error(err);
   });
 }
-
 </script>
+
 
 </body>
 </html>
