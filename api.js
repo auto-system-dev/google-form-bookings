@@ -9,7 +9,7 @@
 // ⚠️ 請將此網址替換成你的 GAS Deploy URL
 // 例如：https://script.google.com/macros/s/AKxxxxxx/exec
 
-const API_BASE = "https://script.google.com/macros/s/AKfycbydnqI9s9AQdqMgLZ5IqQDLQJUr1lMCMubZIUORD-Qrw0CJCL9VJfiMEoxMja_yB43A/exec";
+const API_BASE = "https://script.google.com/macros/s/AKfycbyd4LhUjwVjMeh0a4NAHJitZ-sURP5m8EGyI5oUGppFgS4ZgOqVYWDT2Lei1k8yjaRr/exec";
 
 
 /* ---------------------------------------------------------
