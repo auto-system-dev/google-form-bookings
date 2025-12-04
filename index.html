@@ -9,7 +9,13 @@
   body {
     font-family: "Noto Sans TC", sans-serif;
     background: #fafafa;
-    padding: 20px;
+    margin: 0;
+  }
+
+  .page-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 16px;
   }
 
   h2 {
@@ -67,9 +73,10 @@
 
 <body>
 
-<h2>選擇住宿房型</h2>
-
-<div id="roomList"></div>
+<div class="page-wrapper">
+  <h2>選擇住宿房型</h2>
+  <div id="roomList"></div>
+</div>
 
 <script>
 async function loadRooms() {
@@ -83,7 +90,6 @@ async function loadRooms() {
       const card = document.createElement("div");
       card.className = "room-card";
 
-      // 主要價格：平日價格 priceWeekday
       const mainPrice = room.priceWeekday ?? room.priceWeekend ?? 0;
 
       card.onclick = () => {
